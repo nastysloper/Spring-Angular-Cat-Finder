@@ -17,4 +17,15 @@
     <servlet-name>SuperCats</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
+
+  <filter>
+    <description>Filter to allow Cross-Origin Resource Sharing</description>
+    <display-name>RICHFilter</display-name>
+    <filter-name>RichFilter</filter-name>
+    <filter-class>com.nastysloper.configuration.CORSFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>RichFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 </web-app>
