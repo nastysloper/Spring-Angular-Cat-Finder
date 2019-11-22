@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.sql.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -20,7 +19,7 @@ public class CatController {
     CatManager catManager;
 
     @RequestMapping(value = "/cats", method = RequestMethod.GET)
-    public ResponseEntity<List<Cat>> listAllCats() {
+    public ResponseEntity<List<Cat>> findAllCats() {
         List<Cat> cats = catManager.findAllCats();
         if (cats.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -33,7 +32,7 @@ public class CatController {
         System.out.println("Fetching cat with id " + id);
         try {
             Cat cat = catManager.findById(id);
-            return new ResponseEntity<Cat>(cat, HttpStatus.OK);
+            return new ResponseEntity<>(cat, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             System.out.println("Cat with id " + id + " not found.");
             return new ResponseEntity<Cat>(HttpStatus.NOT_FOUND);
@@ -41,16 +40,19 @@ public class CatController {
     }
 
     // Synchronous request
+    // You don't do anything with the 'model'
+    // I could return a String to get to the homepage?
+    // UPDATE: it's changed. Does it work?
     @RequestMapping(value = "/createCat", method = RequestMethod.POST)
-    public ModelAndView createSyncCat(@ModelAttribute("Cat") Cat newCat) {
+    public String createSyncCat(@ModelAttribute("Cat") Cat newCat) {
 
         Cat cat = catManager.findByName(newCat.getName());
         if (cat != null) {
             System.out.println("A cat with the name " + newCat.getName() + " already exists.");
-            return new ModelAndView("redirect:/home");
+            return "http://localhost:8085/super_cats_war_exploded/home";
         }
         catManager.createNewCat(newCat);
-        return new ModelAndView("redirect:/home");
+        return "http://localhost:8085/super_cats_war_exploded/home";
     }
 
     // Async request
@@ -89,6 +91,6 @@ public class CatController {
         thisCat.setWeakness(cat.getWeakness());
         thisCat.setBirthday(cat.getBirthday());
         catManager.updateCat(thisCat);
-        return new ResponseEntity<Cat>(thisCat, HttpStatus.OK);
+        return new ResponseEntity<>(thisCat, HttpStatus.OK);
     }
 }
